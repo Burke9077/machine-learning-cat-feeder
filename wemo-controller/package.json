@@ -1,0 +1,23 @@
+{
+  "name": "wemo-controller",
+  "version": "1.0.0",
+  "description": "Wemo light controller for the machine learning cat feeder",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Burke9077/machine-learning-cat-feeder.git"
+  },
+  "author": "Matt Burke <burke9077@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Burke9077/machine-learning-cat-feeder/issues"
+  },
+  "homepage": "https://github.com/Burke9077/machine-learning-cat-feeder#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "wemo-client": "^0.15.0"
+  }
+}

@@ -1,0 +1,14 @@
+version: '3'
+services:
+  wemo-controller:
+    build:
+        context: ./wemo-controller
+    env_file: .env
+    ports:
+    - "8000:8000"
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 100
+        window: 10s

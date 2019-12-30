@@ -1,0 +1,4 @@
+# Set what to ignore (not copy) into the docker image.
+
+Dockerfile
+node_modules
