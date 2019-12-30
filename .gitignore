@@ -1,0 +1,2 @@
+# Don't include the .env file. That's where IP addresses and other potentially sensitive info is kept
+.env
