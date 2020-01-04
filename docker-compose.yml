@@ -14,7 +14,7 @@ services:
         window: 10s
   darknet-detector:
     build:
-        context: ./darknet-detector
+        context: ./darknet-decoder
     env_file: .env
     ports:
     - "9080:9080"
