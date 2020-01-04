@@ -12,3 +12,16 @@ services:
         delay: 5s
         max_attempts: 100
         window: 10s
+  darknet-detector:
+    build:
+        context: ./darknet-detector
+    env_file: .env
+    ports:
+    - "9080:9080"
+    - "9070:9070"
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 100
+        window: 10s
