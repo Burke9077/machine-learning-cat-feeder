@@ -3,3 +3,6 @@
 
 # Don't include package libs
 node_modules
+
+# Don't include cudnn libs
+cudnn-*.deb
