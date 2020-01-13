@@ -9,7 +9,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>SB Admin 2 - Dashboard</title>
+  <title>Cat Feeder 9000</title>
 
   <!-- Custom fonts for this template-->
   <script src="https://kit.fontawesome.com/3f0f941a33.js" crossorigin="anonymous"></script>
@@ -20,7 +20,7 @@
 
 </head>
 
-<body id="page-top">
+<body id="page-top" onresize="resizePageElements();">
 
   <!-- Page Wrapper -->
   <div id="wrapper">
@@ -80,28 +80,111 @@
                 </div>
                 <!-- Card Body -->
                 <div class="card-body">
-                  <div class="chart-area">
+                  <style>
+                    .mjpegstream {
+                      max-width: 100%;
+                      max-height: 100%;
+                    }
+                  </style>
+                  <div id="canvas-container">
+                    <canvas id='mjpegstream-canvas' style='border:1px solid #d3d3d3'>
+                    </canvas>
+                    <script language="JavaScript">
+                      var canvas = document.getElementById('mjpegstream-canvas');
+                      var parent = document.getElementById('canvas-container');
 
+                      function resizePageElements() {
+                        canvas.width = parent.offsetWidth;
+                        canvas.height = parent.offsetWidth * 720 / 1280
+                      }
+
+                      function convertPercentToPixelX(xPercent) {
+                        console.log((1280*(xPercent/100))*canvas.width/1280)
+                        return (1280*(xPercent/100))*canvas.width/1280;
+                      }
+
+                      function convertPercentToPixelY(yPercent) {
+                        console.log((720*(yPercent/100))*canvas.height/720)
+                        return (720*(yPercent/100))*canvas.height/720;
+                      }
+
+                      window.onload = function() {
+                        var canvas = document.getElementById('mjpegstream-canvas');
+                        var parent = document.getElementById('canvas-container');
+
+                        var ctx = document.getElementById('mjpegstream-canvas').getContext('2d');
+                        var img = new Image();
+                        img.src = "http://localhost:9080/";
+
+                        resizePageElements();
+
+                        window.setInterval(() => {
+                          ctx.drawImage(img,  0, 0, img.width, img.height,        // source rectangle
+                                              0, 0, canvas.width, canvas.height); // dest rectangle
+                          // Draw the cat rectangles now
+
+                          // Black-cat (luna)
+                          // Box
+                          ctx.beginPath();
+                          ctx.lineWidth = "5";
+                          ctx.strokeStyle = "rgba(102, 0, 102, 1)"
+                          ctx.fillStyle = "rgba(230, 0, 230, 0.25)"
+                          ctx.rect(
+                            convertPercentToPixelX(8),  // % from the left
+                            convertPercentToPixelY(30), // % from the top
+                            convertPercentToPixelX(32), // width is % of the photo
+                            convertPercentToPixelY(65)  // height of rectangle is %
+                          );
+                          ctx.stroke()
+                          ctx.fill()
+                          // Text
+                          ctx.font = "26px Arial";
+                          ctx.fillStyle = "rgba(230, 0, 230, 1)"
+                          ctx.fillText("Luna's Zone", convertPercentToPixelX(8.5), convertPercentToPixelY(30)-25);
+
+                          // Grey-cat (jellybean)
+                          // Box
+                          ctx.beginPath();
+                          ctx.lineWidth = "5";
+                          ctx.strokeStyle = "rgba(0, 102, 0, 1)"
+                          ctx.fillStyle = "rgba(0, 204, 0, 0.25)"
+                          ctx.rect(
+                            convertPercentToPixelX(55),  // % from the left
+                            convertPercentToPixelY(30), // % from the top
+                            convertPercentToPixelX(32), // width is % of the photo
+                            convertPercentToPixelY(65)  // height of rectangle is %
+                          );
+                          ctx.stroke()
+                          ctx.fill()
+                          // Text
+                          ctx.font = "26px Arial";
+                          ctx.fillStyle = "rgba(0, 204, 0, 1)"
+                          ctx.fillText("Jellybean's Zone", convertPercentToPixelX(55.5), convertPercentToPixelY(30)-25);
+
+
+
+
+                        }, 50);
+                      }
+                    </script>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Pie Chart -->
+            <!-- Pie Chart
             <div class="col-xl-4 col-lg-5">
               <div class="card shadow mb-4">
-                <!-- Card Header - Dropdown -->
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                   <h6 class="m-0 font-weight-bold text-primary">???</h6>
                 </div>
-                <!-- Card Body -->
                 <div class="card-body">
                   <div class="chart-pie pt-4 pb-2">
 
                   </div>
                 </div>
               </div>
-            </div>
+            </div>-->
           </div>
 
           <!-- Content Row -->
@@ -128,9 +211,9 @@
       <footer class="sticky-footer bg-white">
         <div class="container my-auto">
           <div class="copyright text-center my-auto">
-            <span>Cat Feeder 9000</span>
-            <span>Copyright 2020 Matt Burke</span>
-            <span>MIT Licensed on Github</span>
+            <span style="display: block; margin: 3px;">Cat Feeder 9000</span>
+            <span style="display: block; margin: 3px;">Copyright 2020 Matt Burke</span>
+            <span style="display: block; margin: 3px;"><a href="https://github.com/Burke9077/machine-learning-cat-feeder">MIT Licensed on Github</a></span>
           </div>
         </div>
       </footer>
@@ -175,13 +258,6 @@
 
   <!-- Custom scripts for all pages-->
   <script src="js/sb-admin-2.min.js"></script>
-
-  <!-- Page level plugins -->
-  <script src="vendor/chart.js/Chart.min.js"></script>
-
-  <!-- Page level custom scripts -->
-  <script src="js/demo/chart-area-demo.js"></script>
-  <script src="js/demo/chart-pie-demo.js"></script>
 
 </body>
 

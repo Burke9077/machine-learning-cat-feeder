@@ -11,6 +11,7 @@ RUN dpkg-reconfigure tzdata
 RUN apt-get -qqy install \
     build-essential \
     cmake \
+    curl \
     ffmpeg \
     git \
     gfortran \
@@ -143,8 +144,6 @@ RUN cmake \
     .. && \
   make -j && \
   make install
-
-RUN apt-get -qqy install curl
 
 # Copy in model
 RUN mkdir /model

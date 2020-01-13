@@ -8,13 +8,13 @@
   -json_port 9070 \
   -mjpeg_port 9080 \
   -ext_output \
-  http://10.10.185.120:8080/?action=stream&dummy=param.mjpg
+  ${MJPEG_STREAM_URL}/?action=stream&dummy=param.mjpg >/dev/null 2>&1
 
 # Check to make sure the process is still running
 while :
 do
   sleep 5
-  port_in_use=$(curl --max-time .5 --silent http://localhost:9070 | wc -l 2>/dev/null)
+  port_in_use=$(curl --max-time 10 --silent http://localhost:9070 | wc -l 2>/dev/null)
   if [[ "$port_in_use" -lt 10 ]]; then
     echo "Port is no longer serving traffic, system is probably down."
     exit 1
