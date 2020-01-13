@@ -17,11 +17,64 @@ const { spawn } = require('child_process');
 const config = {
   port: 8000,
   wemo: {
-    leftIpAddr: process.env.WEMO_LEFT_IP_ADDR,
-    rightIpAddr: process.env.WEMO_RIGHT_IP_ADDR,
     commandTimeout: 30
   }
 }
+
+let wemoClients = {
+  left: null,
+  leftLastState: 0,
+  right: null,
+  rightLastState: 0
+}
+
+function setPowerState(leftOrRight, offOrOnZeroOrOne) {
+  if (leftOrRight === "left") {
+    if (wemoClients.leftLastState !== offOrOnZeroOrOne) {
+      // They want us to change state
+        wemoClients.left.setBinaryState(offOrOnZeroOrOne);
+        wemoClients.leftLastState = offOrOnZeroOrOne;
+        return;
+    }
+  } else if (leftOrRight === "right") {
+    if (wemoClients.rightLastState !== offOrOnZeroOrOne) {
+      // They want us to change state
+        wemoClients.right.setBinaryState(offOrOnZeroOrOne);
+        wemoClients.rightLastState = offOrOnZeroOrOne;
+        return;
+    }
+  }
+}
+
+wemo.discover(function(err, deviceInfo) {
+  // Find the ones we care about
+  if (deviceInfo.friendlyName == "Cat Feeder Right") {
+    console.log('Wemo Device Found: %j', deviceInfo);
+
+    wemoClients.right = wemo.client(deviceInfo);
+    wemoClients.right.on('error', function(err) {
+      console.log('Error: %s', err.code);
+    });
+    wemoClients.right.on('binaryState', function(value) {
+      console.log('Binary State changed to: %s', value);
+      wemoClients.rightLastState = value;
+    });
+  }
+
+  if (deviceInfo.friendlyName == "Cat Feeder Left") {
+    console.log('Wemo Device Found: %j', deviceInfo);
+
+    wemoClients.left = wemo.client(deviceInfo);
+    wemoClients.left.on('error', function(err) {
+      console.log('Error: %s', err.code);
+    });
+    wemoClients.left.on('binaryState', function(value) {
+      console.log('Binary State changed to: %s', value);
+      wemoClients.leftLastState = value
+    });
+  }
+});
+
 
 // Define default route for testing
 app.get('/', (req, res) => res.send('Hello World!'));
@@ -42,22 +95,13 @@ app.get('/v1/device/:device/setPower/:setPower', (request, response) => {
   // The :setPower variable will be "on" or "off".
   let deviceDesiredPowerState = request.params.setPower;
 
-  /*
-    Now we need to set a variable for the device's IP address based on if the
-    user sent "left" or "right" so we can pass the IP to python for the actual work.
-  */
-  let ipAddr = (leftOrRightDevice === "left") ? config.wemo.leftIpAddr : config.wemo.rightIpAddr;
+  if (deviceDesiredPowerState === "on") {
+    setPowerState(leftOrRightDevice, 1)
+  } else if (deviceDesiredPowerState === "off") {
+    setPowerState(leftOrRightDevice, 0)
+  }
 
-  // We have all we need, send it to python
-  let child = spawn('python3', ["wemo-controller.py", ipAddr, deviceDesiredPowerState]);
-  child.on('exit', code => {
-    if (code !== 0) {
-      // Send our response to the requestor letting them know there was an error.
-      response.status(500).json({message: `Python task existed with code ${code}`});
-    } else {
-      response.status(200).json({message: `Successfully changed power state of ${leftOrRightDevice} light to ${deviceDesiredPowerState}`})
-    }
-  })
+  response.status(500).json({message: `Function not yet supported`});
 });
 
 app.listen(config.port, () => console.log(`Wemo cat-feeder controller app listening on port ${config.port}!`));
