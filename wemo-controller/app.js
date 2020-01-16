@@ -97,11 +97,11 @@ app.get('/v1/device/:device/setPower/:setPower', (request, response) => {
 
   if (deviceDesiredPowerState === "on") {
     setPowerState(leftOrRightDevice, 1)
+    response.status(200).json({message: `Okay`});
   } else if (deviceDesiredPowerState === "off") {
     setPowerState(leftOrRightDevice, 0)
+    response.status(200).json({message: `Okay`});
   }
-
-  response.status(500).json({message: `Function not yet supported`});
 });
 
 app.listen(config.port, () => console.log(`Wemo cat-feeder controller app listening on port ${config.port}!`));

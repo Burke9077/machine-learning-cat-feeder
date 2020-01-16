@@ -20,7 +20,7 @@ function beginProcessingRecords() {
     }));
 }
 
-let framesToConsiderForDecisions = 15
+let framesToConsiderForDecisions = 10
 let frameBuffer = [];
 function addFrameToFrameBuffer(frameData) {
   if (frameBuffer.length == framesToConsiderForDecisions) {
@@ -91,8 +91,8 @@ function determineRectanglesOverlapPercent(rect1, rect2) {
 }
 
 let catGeofenceCoords = {
-  greyCat: ConvertRelativeLrCoordinateSystemCenterToXy(0.55, 0.3, 0.32, 0.65),
-  blackCat: ConvertRelativeLrCoordinateSystemCenterToXy(0.08, 0.3, 0.32, 0.65)
+  greyCat: ConvertRelativeLrCoordinateSystemCenterToXy(0.55, 0.1, 0.32, 0.85),
+  blackCat: ConvertRelativeLrCoordinateSystemCenterToXy(0.08, 0.1, 0.32, 0.85)
 }
 
 /*
@@ -173,14 +173,12 @@ function analyzeFrameBuffer(testData) {
     let shouldUnlockGrey= false;
     let shouldUnlockBlack= false;
 
-    let confidenceRequiredToUnlockDoor = 0.42;
-
-    if (catZonePercentage.blackCat.blackCatZoneAverage >= confidenceRequiredToUnlockDoor) {
+    if (catZonePercentage.blackCat.blackCatZoneAverage > catZonePercentage.greyCat.greyCatZoneAverage) {
       // Black cat is in the black cat zone
       shouldUnlockBlack = true;
     }
 
-    if (catZonePercentage.greyCat.greyCatZoneAverage >= confidenceRequiredToUnlockDoor) {
+    if (catZonePercentage.greyCat.greyCatZoneAverage > catZonePercentage.blackCat.blackCatZoneAverage) {
       // Grey cat is in the grey cat zone
       shouldUnlockGrey = true;
     }

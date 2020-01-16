@@ -45,10 +45,39 @@ services:
         delay: 5s
         max_attempts: 100
         window: 10s
+  web-http-redirector:
+    build:
+      context: ./web-http-redirector
+    image: ml-catfeeder/web-http-redirector
+    network_mode: "host"
+    env_file: .env
+    ports:
+    - "8100:8100"
+    privileged: true
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 100
+        window: 10s
   logic-controller:
     build:
       context: ./logic-controller
     image: ml-catfeeder/logic-controller
+    network_mode: "host"
+    env_file: .env
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 100
+        window: 10s
+  data-collector:
+    build:
+      context: ./data-collector
+    image: ml-catfeeder/data-collector
+    volumes:
+      - "/home/matt/Desktop/incoming-cat-photos:/data"
     network_mode: "host"
     env_file: .env
     deploy:

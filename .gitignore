@@ -8,4 +8,4 @@ node_modules
 cudnn-*.deb
 
 # Don't include model files, they are too big
-darknet-decoder/mode/backup/*
+darknet-decoder/model/backup/*
