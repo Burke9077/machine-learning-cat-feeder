@@ -6,3 +6,6 @@ node_modules
 
 # Don't include cudnn libs
 cudnn-*.deb
+
+# Don't include model files, they are too big
+darknet-decoder/mode/backup/*
