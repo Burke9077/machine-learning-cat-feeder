@@ -28,7 +28,7 @@ function beginProcessingRecords() {
         console.log(`Logic controller starting`);
         beginProcessingRecords();
       }, timeDelay);
-    })
+    });
 }
 
 let framesToConsiderForDecisions = 10
