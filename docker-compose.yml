@@ -37,7 +37,6 @@ services:
     env_file: .env
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - ".env:/data/.env"
     deploy:
       restart_policy:
         condition: any
@@ -48,6 +47,7 @@ services:
     build:
       context: ./video-stream-reverse-proxy
     image: ml-catfeeder/video-stream-reverse-proxy
+    command: "echo 'Waiting for video-stream-reverse-proxy-controller to start'"
   web-interface:
     build:
       context: ./web-interface
