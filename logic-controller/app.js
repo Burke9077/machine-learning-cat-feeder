@@ -17,7 +17,18 @@ function beginProcessingRecords() {
     .pipe(es.mapSync(function (data) {
       processFrame(data)
       return data
-    }));
+    }))
+    .on('error', (error) => {
+      let sError = JSON.stringify(error, null, 4);
+      console.error(`JSONStream error occurred: ${sError}`)
+
+      // Wait a bit and then try again!
+      console.log(`Waiting to start logic-controller`)
+      setTimeout(() => {
+        console.log(`Logic controller starting`);
+        beginProcessingRecords();
+      }, timeDelay);
+    })
 }
 
 let framesToConsiderForDecisions = 10
@@ -191,7 +202,6 @@ function analyzeFrameBuffer(testData) {
 }
 
 function calculatePercentOfCatInZones(catDataArray) {
-  console.log(JSON.stringify(catDataArray, null, 4))
   let resultData = {
     blackCat: {
       blackCatZoneAverage: 0,
