@@ -2,7 +2,7 @@ const request = require('request');
 const JSONStream = require('JSONStream');
 const es = require('event-stream');
 
-const timeDelay = 5000; // milliseconds to wait before starting business logic
+const timeDelay = 7000; // milliseconds to wait before starting business logic
 
 // Wait a bit for darknet to come up first
 console.log(`Waiting to start logic-controller`)
@@ -191,6 +191,7 @@ function analyzeFrameBuffer(testData) {
 }
 
 function calculatePercentOfCatInZones(catDataArray) {
+  console.log(JSON.stringify(catDataArray, null, 4))
   let resultData = {
     blackCat: {
       blackCatZoneAverage: 0,
@@ -214,15 +215,15 @@ function calculatePercentOfCatInZones(catDataArray) {
     // Is black cat in frame?
     if (currentCatData.black_cat != null) {
       // Black cat is in frame, add its percent in the zone to total
-      resultData.blackCat.blackCatZoneAverage += currentCatData.black_cat.overlap.blackCatOverlap;
-      resultData.blackCat.greyCatZoneAverage += currentCatData.black_cat.overlap.greyCatOverlap;
+      resultData.blackCat.blackCatZoneAverage += currentCatData.black_cat.overlap.blackCatOverlap * currentCatData.black_cat.confidence;
+      resultData.blackCat.greyCatZoneAverage += currentCatData.black_cat.overlap.greyCatOverlap * currentCatData.black_cat.confidence;
     }
 
     // Is grey cat in frame?
     if (currentCatData.grey_cat != null) {
       // Grey cat is in frame, add its percent in the zone to total
-      resultData.greyCat.blackCatZoneAverage += currentCatData.grey_cat.overlap.blackCatOverlap;
-      resultData.greyCat.greyCatZoneAverage += currentCatData.grey_cat.overlap.greyCatOverlap;
+      resultData.greyCat.blackCatZoneAverage += currentCatData.grey_cat.overlap.blackCatOverlap * currentCatData.grey_cat.confidence;
+      resultData.greyCat.greyCatZoneAverage += currentCatData.grey_cat.overlap.greyCatOverlap * currentCatData.grey_cat.confidence;
     }
   }
 

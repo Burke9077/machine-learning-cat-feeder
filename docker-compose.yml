@@ -14,16 +14,25 @@ services:
         delay: 5s
         max_attempts: 100
         window: 10s
-  darknet-detector:
+  darknet-decoder-controller:
     build:
         context: ./darknet-decoder
     image: ml-catfeeder/darknet-decoder
     network_mode: "host"
     env_file: .env
-    ports:
-    - "9080:9080"
-    - "9070:9070"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
     privileged: true
+  darknet-decoder:
+    build:
+        context: ./darknet-decoder
+    image: ml-catfeeder/darknet-decoder
+    command: "echo 'Waiting for darknet-decoder-controller to start'"
+  video-stream-reverse-proxy:
+    build:
+      context: ./video-stream-reverse-proxy
+    image: ml-catfeeder/video-stream-reverse-proxy
+    network_mode: "host"
     deploy:
       restart_policy:
         condition: any
