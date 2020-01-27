@@ -22,23 +22,32 @@ services:
     env_file: .env
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+      - ".env:/data/.env"
     privileged: true
   darknet-decoder:
     build:
         context: ./darknet-decoder
     image: ml-catfeeder/darknet-decoder
     command: "echo 'Waiting for darknet-decoder-controller to start'"
-  video-stream-reverse-proxy:
+  video-stream-reverse-proxy-controller:
     build:
-      context: ./video-stream-reverse-proxy
-    image: ml-catfeeder/video-stream-reverse-proxy
+      context: ./video-stream-reverse-proxy-controller
+    image: ml-catfeeder/video-stream-reverse-proxy-controller
     network_mode: "host"
+    env_file: .env
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - ".env:/data/.env"
     deploy:
       restart_policy:
         condition: any
         delay: 5s
         max_attempts: 100
         window: 10s
+  video-stream-reverse-proxy:
+    build:
+      context: ./video-stream-reverse-proxy
+    image: ml-catfeeder/video-stream-reverse-proxy
   web-interface:
     build:
       context: ./web-interface
