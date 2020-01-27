@@ -81,17 +81,17 @@ services:
         delay: 5s
         max_attempts: 100
         window: 10s
-  data-collector:
-    build:
-      context: ./data-collector
-    image: ml-catfeeder/data-collector
-    volumes:
-      - "/home/matt/Desktop/incoming-cat-photos:/data"
-    network_mode: "host"
-    env_file: .env
-    deploy:
-      restart_policy:
-        condition: any
-        delay: 5s
-        max_attempts: 100
-        window: 10s
+  # data-collector:
+  #   build:
+  #     context: ./data-collector
+  #   image: ml-catfeeder/data-collector
+  #   volumes:
+  #     - "/home/matt/Desktop/incoming-cat-photos:/data"
+  #   network_mode: "host"
+  #   env_file: .env
+  #   deploy:
+  #     restart_policy:
+  #       condition: any
+  #       delay: 5s
+  #       max_attempts: 100
+  #       window: 10s
