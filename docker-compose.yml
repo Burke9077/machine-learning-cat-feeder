@@ -90,17 +90,32 @@ services:
         delay: 5s
         max_attempts: 100
         window: 10s
-  # data-collector:
-  #   build:
-  #     context: ./data-collector
-  #   image: ml-catfeeder/data-collector
-  #   volumes:
-  #     - "/home/matt/Desktop/incoming-cat-photos:/data"
-  #   network_mode: "host"
-  #   env_file: .env
-  #   deploy:
-  #     restart_policy:
-  #       condition: any
-  #       delay: 5s
-  #       max_attempts: 100
-  #       window: 10s
+  serial-motor-controller:
+    build:
+      context: ./serial-motor-controller
+    image: ml-catfeeder/serial-motor-controller
+    env_file: .env
+    ports:
+    - "13000:13000"
+    devices:
+    - "/dev/ttyACM0:/dev/ttyACM0"
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 100
+        window: 10s
+  data-collector:
+    build:
+      context: ./data-collector
+    image: ml-catfeeder/data-collector
+    volumes:
+      - "/home/matt/Desktop/incoming-cat-photos:/data"
+    network_mode: "host"
+    env_file: .env
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 100
+        window: 10s

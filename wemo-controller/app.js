@@ -101,6 +101,8 @@ app.get('/v1/device/:device/setPower/:setPower', (request, response) => {
   } else if (deviceDesiredPowerState === "off") {
     setPowerState(leftOrRightDevice, 0)
     response.status(200).json({message: `Okay`});
+  } else {
+    response.status(422).json({message: `Can't understand input`})
   }
 });
 

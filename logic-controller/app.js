@@ -3,6 +3,7 @@ const JSONStream = require('JSONStream');
 const es = require('event-stream');
 
 const timeDelay = 7000; // milliseconds to wait before starting business logic
+let debug = false;
 
 // Wait a bit for darknet to come up first
 console.log(`Waiting to start logic-controller`)
@@ -12,23 +13,36 @@ setTimeout(() => {
 }, timeDelay);
 
 function beginProcessingRecords() {
-  request({url: 'http://localhost:9070'})
-    .pipe(JSONStream.parse('*'))
-    .pipe(es.mapSync(function (data) {
-      processFrame(data)
-      return data
-    }))
-    .on('error', (error) => {
-      let sError = JSON.stringify(error, null, 4);
-      console.error(`JSONStream error occurred: ${sError}`)
-
-      // Wait a bit and then try again!
-      console.log(`Waiting to start logic-controller`)
-      setTimeout(() => {
-        console.log(`Logic controller starting`);
+  try {
+    request({url: 'http://localhost:9070'})
+      .on('error', (err) => {
+        console.error("Entering error block");
+        console.error(JSON.stringify(err, null, 4));
+        console.error("Restarting function");
         beginProcessingRecords();
-      }, timeDelay);
-    });
+      })
+      .pipe(JSONStream.parse('*'))
+      .pipe(es.mapSync(function (data) {
+        processFrame(data)
+        return data
+      }))
+      .on('error', (error) => {
+        let sError = JSON.stringify(error, null, 4);
+        console.error(`JSONStream error occurred: ${sError}`)
+
+        // Wait a bit and then try again!
+        console.log(`Waiting to start logic-controller`)
+        setTimeout(() => {
+          console.log(`Logic controller starting`);
+          beginProcessingRecords();
+        }, timeDelay);
+      });
+  } catch (e) {
+    console.error("Entering catch block");
+    console.error(JSON.stringify(e, null, 4));
+    console.error("Restarting function");
+    beginProcessingRecords();
+  }
 }
 
 let framesToConsiderForDecisions = 10
@@ -112,9 +126,6 @@ let catGeofenceCoords = {
   so decisions aren't made with jittery data.
 */
 function processFrame(frame) {
-  // Print the frame
-  console.log(JSON.stringify(frame));
-
   let processedFrame = {
     black_cat: null,
     grey_cat: null
@@ -244,7 +255,10 @@ function calculatePercentOfCatInZones(catDataArray) {
   resultData.greyCat.blackCatZoneAverage = resultData.greyCat.blackCatZoneAverage / framesConsidered;
   resultData.greyCat.greyCatZoneAverage = resultData.greyCat.greyCatZoneAverage / framesConsidered;
   let finalANalys = JSON.stringify(resultData, null, 4);
-  console.log(`Printing final analysis\n${finalANalys}`)
+
+  if (debug) {
+    console.log(`Printing final analysis\n${finalANalys}`)
+  }
 
   return(resultData);
 }
@@ -257,24 +271,33 @@ function processDoorController(shouldUnlockBlack, shouldUnlockGrey) {
   if (shouldUnlockBlack == true) {
     // Unlock it
     request('http://localhost:8000/v1/device/right/setPower/on', function(err, res, body) {
-        console.log(JSON.stringify({err: err, body: body}));
+        if (debug) {
+          console.log(JSON.stringify({err: err, body: body}));
+        }
     });
+
   } else {
     // Lock it
     request('http://localhost:8000/v1/device/right/setPower/off', function(err, res, body) {
-        console.log(JSON.stringify({err: err, body: body}));
+        if (debug) {
+          console.log(JSON.stringify({err: err, body: body}));
+        }
     });
   }
 
   if (shouldUnlockGrey == true) {
     // Unlock it
     request('http://localhost:8000/v1/device/left/setPower/on', function(err, res, body) {
-        console.log(JSON.stringify({err: err, body: body}));
+        if (debug) {
+          console.log(JSON.stringify({err: err, body: body}));
+        }
     });
   } else {
     // Lock it
     request('http://localhost:8000/v1/device/left/setPower/off', function(err, res, body) {
-        console.log(JSON.stringify({err: err, body: body}));
+        if (debug) {
+          console.log(JSON.stringify({err: err, body: body}));
+        }
     });
   }
 }
