@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/Burke9077/machine-learning-cat-feeder#readme",
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "wemo-client": "^0.15.0"
   }
 }
